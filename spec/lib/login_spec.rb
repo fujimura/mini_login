@@ -1,11 +1,11 @@
 
 require 'spec_helper'
 
-describe Login do
+describe MiniLogin do
   include RSpec::Rails::ControllerExampleGroup
 
   controller do
-    include Login
+    include MiniLogin
   end
   let(:user) { FactoryGirl.create :user }
 
@@ -20,7 +20,7 @@ describe Login do
       it 'should raise Unauthorized ' do
         expect do
           controller.login! nil
-        end.to raise_error Login::Unauthorized
+        end.to raise_error MiniLogin::Unauthorized
       end
     end
     context 'with user.id' do
@@ -75,12 +75,12 @@ describe Login do
   end
   describe 'alternative identifier_attribute' do
     before :all do
-      Login.configure do |c|
+      MiniLogin.configure do |c|
         c.identifier_attribute = :email
       end
     end
     after :all do
-      Login.configure do |c|
+      MiniLogin.configure do |c|
         c.identifier_attribute = :id
       end
     end

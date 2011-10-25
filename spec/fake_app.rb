@@ -5,7 +5,7 @@ require 'active_record'
 require 'action_dispatch'
 require 'action_controller'
 require 'action_controller/railtie'
-require 'login'
+require 'mini_login'
 
 
 # database
@@ -38,7 +38,7 @@ end
 
 # controllers
 class ApplicationController < ActionController::Base
-  include Login
+  include MiniLogin
 end
 
 # helpers

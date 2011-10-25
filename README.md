@@ -1,4 +1,4 @@
-# token_attribute [<img src="https://secure.travis-ci.org/fujimura/token_attribute.png"/>](http://travis-ci.org/fujimura/token_attribute)
+# mini_login [<img src="https://secure.travis-ci.org/fujimura/mini_login.png"/>](http://travis-ci.org/fujimura/mini_login)
 
 Small macro to define unique random token generator for ActiveRecord.
 
@@ -9,15 +9,15 @@ Small macro to define unique random token generator for ActiveRecord.
 ## Basic
 
 class ApplicationController < ActionController::Base
-  include Login
+  include MiniLogin
 
-  # Login#login! creates current_user, otherwise raises Login::Unauthorized
+  # MiniLogin#login! creates current_user, otherwise raises MiniLogin::Unauthorized
   def login_required
     login! current_user
   end
 
   # If not logged in, redirect to login form
-  rescue_from Login::Unauthorized do
+  rescue_from MiniLogin::Unauthorized do
     redirect_to new_session_path
   end
 end
@@ -26,12 +26,13 @@ class SessionController
   def create
     user = User.find_by_email(params[:email])
     if user && user.authenticate(params[:password])
-      login! user # Login as found and authenticated user
+      login! user # MiniLogin as found and authenticated user
     else
       render :new # Authenticate again
     end
   end
 end
+```
 
 ## Install
 

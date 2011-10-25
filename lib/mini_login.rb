@@ -1,7 +1,7 @@
-require "login/version"
+require "mini_login/version"
 
 
-module Login
+module MiniLogin
   class Unauthorized < StandardError; end
 
   # Do configurations
@@ -10,7 +10,7 @@ module Login
   #
   # [identifier_attribute] Attribute to identify user. This should be unique. Default is +:id+
   #
-  #     Login.configure do |c|
+  #     MiniLogin.configure do |c|
   #       c.identifier_attribute = :email
   #     end
   #

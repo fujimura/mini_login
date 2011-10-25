@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "login/version"
+require "mini_login/version"
 
 Gem::Specification.new do |s|
-  s.name        = "login"
-  s.version     = Login::VERSION
+  s.name        = "mini_login"
+  s.version     = MiniLogin::VERSION
   s.authors     = ["Fujimura Daisuke"]
   s.email       = ["dfujimura@aiming-inc.com"]
   s.homepage    = ""
   s.summary     = %q{TODO: Write a gem summary}
   s.description = %q{TODO: Write a gem description}
 
-  s.rubyforge_project = "login"
+  s.rubyforge_project = "mini_login"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

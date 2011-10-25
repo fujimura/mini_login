@@ -1,3 +1,3 @@
-module Login
+module MiniLogin
   VERSION = "0.0.1"
 end
