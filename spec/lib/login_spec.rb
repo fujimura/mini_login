@@ -1,13 +1,17 @@
 
 require 'spec_helper'
 
-describe ApplicationController do
+describe Login do
   include RSpec::Rails::ControllerExampleGroup
+
+  controller do
+    include Login
+  end
   let(:user) { FactoryGirl.create :user }
 
   describe '#login!' do
     context 'with user' do
-      it 'should login ' do
+      it 'should login with given user' do
         controller.login! user
         session[:current_user_id].should == user.id
       end
@@ -16,7 +20,13 @@ describe ApplicationController do
       it 'should raise Unauthorized ' do
         expect do
           controller.login! nil
-        end.to raise_error Unauthorized
+        end.to raise_error Login::Unauthorized
+      end
+    end
+    context 'with user.id' do
+      it 'should login with given user' do
+        controller.login! user.id
+        session[:current_user_id].should == user.id
       end
     end
   end
@@ -61,6 +71,39 @@ describe ApplicationController do
     it 'should remove @current_user' do
       controller.logout!
       controller.instance_variable_get('@current_user').should be_nil
+    end
+  end
+  describe 'alternative identifier_attribute' do
+    before :all do
+      Login.configure do |c|
+        c.identifier_attribute = :email
+      end
+    end
+    after :all do
+      Login.configure do |c|
+        c.identifier_attribute = :id
+      end
+    end
+    context '#login! with AR::Base' do
+      it 'should login with given user' do
+        controller.login! user
+        controller.current_user.should == user
+      end
+      it 'stores current_user_email' do
+        controller.login! user
+        session[:current_user_email].should == user.email
+      end
+    end
+    context '#login! with attribute value' do
+      it 'should login with given user' do
+        controller.login! user
+        controller.current_user.should == user
+      end
+      it 'stores current_user_email' do
+        controller.login! user.email
+        controller.current_user.should == user
+        session[:current_user_email].should == user.email
+      end
     end
   end
 end

@@ -1,10 +1,28 @@
 require "login/version"
 
-class Unauthorized < StandardError; end
 
 module Login
+  class Unauthorized < StandardError; end
+
+  # Do configurations
+  #
+  # Available Configurations are:
+  #
+  # [identifier_attribute] Attribute to identify user. This should be unique. Default is +:id+
+  #
+  #     Login.configure do |c|
+  #       c.identifier_attribute = :email
+  #     end
+  #
+  def self.configure
+    yield self
+  end
+
+  mattr_accessor :identifier_attribute
+  @@identifier_attribute = :id
 
   extend ActiveSupport::Concern
+
   included do |base|
     base.class_eval do
       helper_method :current_user
@@ -16,13 +34,22 @@ module Login
 
   module InstanceMethods
 
-    # Store user id in session.
+    # Store user id(or configured attribute) in session.
     #
+    # @raise +Unauthorized+ Can't authorize user with given value.
     def login!(user)
       raise Unauthorized unless user
-      session[:current_user_id] = user.id
+      identifier = case user
+                   when ActiveRecord::Base
+                     user[self.identifier_attribute]
+                   else
+                     user
+                   end
+
+      session[identifier_name] = identifier
 
       # for session fixation attacks
+      # TODO make configurable
       request.session_options[:renew] = true
     end
 
@@ -31,14 +58,14 @@ module Login
     #
     # @return user or nil
     def current_user
-      @current_user ||= ::User.find(session[:current_user_id])
+      @current_user ||= ::User.send("find_by_#{self.identifier_attribute}!", session[identifier_name])
     rescue ActiveRecord::RecordNotFound
       nil
     end
 
     # Return current_user exists or not.
     #
-    # @return [Boolean] Whether or not page's plan is updated.
+    # @return [Boolean] True if user is logged in.
     def logged_in?
       !current_user.blank?
     end
@@ -50,5 +77,11 @@ module Login
       reset_session
       @current_user = nil
     end
+
+    private
+    def identifier_name
+      "current_user_#{self.identifier_attribute}".to_sym
+    end
+
   end
 end
