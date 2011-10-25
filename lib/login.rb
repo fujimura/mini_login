@@ -1,5 +1,54 @@
 require "login/version"
 
+class Unauthorized < StandardError; end
+
 module Login
-  # Your code goes here...
+
+  extend ActiveSupport::Concern
+  included do |base|
+    base.class_eval do
+      helper_method :current_user
+    end
+  end
+
+  module ClassMethods
+  end
+
+  module InstanceMethods
+
+    # Store user id in session.
+    #
+    def login!(user)
+      raise Unauthorized unless user
+      session[:current_user_id] = user.id
+
+      # for session fixation attacks
+      request.session_options[:renew] = true
+    end
+
+    # Return current_user.
+    # If it does not exist, returns nil.
+    #
+    # @return user or nil
+    def current_user
+      @current_user ||= ::User.find(session[:current_user_id])
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+
+    # Return current_user exists or not.
+    #
+    # @return [Boolean] Whether or not page's plan is updated.
+    def logged_in?
+      !current_user.blank?
+    end
+
+    # Delete current_user from database and session.
+    #
+    def logout!
+      return unless current_user
+      reset_session
+      @current_user = nil
+    end
+  end
 end

@@ -18,6 +18,14 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  s.add_dependency "rails", "> 3.1.0"
+  s.add_development_dependency "sqlite3", "~> 1.3.4"
+  s.add_development_dependency "database_cleaner", "~> 0.6.7"
+  s.add_development_dependency "rspec", "~> 2.6.0"
+  s.add_development_dependency "rspec-rails", "~> 2.6.1"
+  s.add_development_dependency "factory_girl", "~> 2.0.4"
+  s.add_development_dependency "shoulda", "~> 2.11.3"
+  s.add_development_dependency "watchr"
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
